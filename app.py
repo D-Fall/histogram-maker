@@ -22,8 +22,6 @@ def main():
     middle_values = calculate_middle_values(lower_bound, channel_size, number_of_channels)
     frequency = count_freq(data, middle_values, number_of_channels, channel_size, round_coeff)
     height_values = exp_prob_dens(frequency, number_of_data, channel_size)
-    
-    plt.bar(middle_values, height_values, channel_size)
 
 
     if sum(frequency) != number_of_data:
@@ -32,6 +30,8 @@ def main():
 
     x = np.linspace(lower_bound, upper_bound, 1000)
     g_teo = (1 / (stand_dev * np.sqrt(2 * np.pi))) * np.exp(-0.5 * (((x - average) / stand_dev)**2))
+
+    plt.bar(middle_values, height_values, channel_size)
     
     plt.plot(x, g_teo, 'r')
     plt.xlabel("x")
