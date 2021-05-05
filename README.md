@@ -1,6 +1,6 @@
 # Welcome to the first version of the Histogram Maker
 
-This is a console app that reads an Excel file and plots for you a histogram with the gaussian function included. 
+This is a console app that reads an Excel file and plots for you a histogram with the gaussian distribution included. 
 
 ## Packages used
 
