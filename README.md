@@ -8,6 +8,7 @@ This is a console app that reads an Excel file and plots for you a histogram wit
 * numpy
 * pandas
 * xlrd
+* openpyxl
 
 ## Instructions
 
