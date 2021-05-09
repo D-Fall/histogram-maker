@@ -30,4 +30,4 @@ Then the app will ask you some questions.
 
 ## Disclaimer
 
-If the number of data in the final histogram isn't the same as the number of data analyzed, then the program will tell you that data is missing. This is a bug and shoud be reported for fix.
+If the number of data in the final histogram isn't the same as the number of data analyzed, then the program will tell you that data is missing. This is a bug and shoud be reported for fix. Also, the app still doesn't deal really well with errors, this is in the plans as well as adding a GUI.
