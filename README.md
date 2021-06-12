@@ -1,6 +1,6 @@
 # Welcome to the first version of the Histogram Maker
 
-This is a console app that reads an Excel file and plots for you a histogram with the gaussian distribution included. 
+This is an app, executed via console, that reads an Excel file and plots for you a histogram with the gaussian distribution included. 
 
 ## Packages used
 
@@ -9,6 +9,7 @@ This is a console app that reads an Excel file and plots for you a histogram wit
 * pandas
 * xlrd
 * openpyxl
+* PyQt5
 
 ## Instructions
 
@@ -30,4 +31,8 @@ Then the app will ask you some questions.
 
 ## Disclaimer
 
-If the number of data in the final histogram isn't the same as the number of data analyzed, then the program will tell you that data is missing. This is a bug and shoud be reported for fix. Also, the app still doesn't deal really well with errors, this is in the plans as well as adding a GUI.
+If the number of data in the final histogram isn't the same as the number of data analyzed, then the program will tell you that data is missing in the console. If this happens, maybe your round coeffitient is too low, but if it is not the case, then the code has a bug that should be fixed. Please, report if it happens to you.
+
+## TO DO
+
+* Deal better with errors
