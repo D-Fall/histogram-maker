@@ -10,8 +10,8 @@ class App(QMainWindow):
     def __init__(self):
         super(App, self).__init__()
         self.width = 500
-        self.height = 650
-        self.title = "GUI Prototype"
+        self.height = 400
+        self.title = "Histogram Maker"
         self.spacing_left = 200
         self.spacing_top = 200
         self.initUI()
@@ -68,25 +68,25 @@ class App(QMainWindow):
 
 
     def make_histogram(self):
-        file_name = input("File name: ")
-        column_name = input("Column name: ")
-        number_of_data = int(input("Amount of data: "))
-        number_of_channels = int(input("Number of bins: "))
-        round_coeff = int(input("Round coeffitient: "))
+        file_name = self.text_file.text()
+        column_name = self.text_column.text()
+        number_of_data = int(self.text_data.text())
+        number_of_bins = int(self.text_bins.text())
+        round_coeff = int(self.text_round.text())
 
         table = pd.read_excel(file_name)
         data = table[column_name]
         data = [data[i] for i in range(number_of_data)]
         
-        average = calculate_average(data)
+        average = App.calculate_average(data)
         lower_bound = min(data)
         upper_bound = max(data)
-        stand_dev = calculate_stand_dev(data, average, number_of_data)
+        stand_dev = App.calculate_stand_dev(data, average, number_of_data)
 
-        channel_size = calculate_channel_size(lower_bound, upper_bound, number_of_channels)
-        middle_values = calculate_middle_values(lower_bound, channel_size, number_of_channels)
-        frequency = count_freq(data, middle_values, number_of_channels, channel_size, round_coeff)
-        height_values = exp_prob_dens(frequency, number_of_data, channel_size)
+        channel_size = App.calculate_channel_size(lower_bound, upper_bound, number_of_bins)
+        middle_values = App.calculate_middle_values(lower_bound, channel_size, number_of_bins)
+        frequency = App.count_freq(data, middle_values, number_of_bins, channel_size, round_coeff)
+        height_values = App.exp_prob_dens(frequency, number_of_data, channel_size)
 
 
         if sum(frequency) != number_of_data:
