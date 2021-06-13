@@ -78,23 +78,21 @@ class App(QMainWindow):
         data = table[column_name]
         data = [data[i] for i in range(number_of_data)]
         
-        average = App.calculate_average(data)
+        average = Equation.get_average(data)
         lower_bound = min(data)
         upper_bound = max(data)
-        stand_dev = App.calculate_stand_dev(data, average, number_of_data)
+        stand_dev = Equation.get_standard_deviation(data, average, number_of_data)
 
-        channel_size = App.calculate_channel_size(lower_bound, upper_bound, number_of_bins)
-        middle_values = App.calculate_middle_values(lower_bound, channel_size, number_of_bins)
-        frequency = App.count_freq(data, middle_values, number_of_bins, channel_size, round_coeff)
-        height_values = App.exp_prob_dens(frequency, number_of_data, channel_size)
-
+        channel_size = Equation.get_bin_size(lower_bound, upper_bound, number_of_bins)
+        middle_values = Equation.get_middle_values(lower_bound, channel_size, number_of_bins)
+        frequency = Equation.count_freq(data, middle_values, number_of_bins, channel_size, round_coeff)
+        height_values = Equation.exp_prob_dens(frequency, number_of_data, channel_size)
 
         if sum(frequency) != number_of_data:
             print("Missing data")
 
-
         x = np.linspace(lower_bound, upper_bound, 1000)
-        g_teo = (1 / (stand_dev * np.sqrt(2 * np.pi))) * np.exp(-0.5 * (((x - average) / stand_dev)**2))
+        g_teo = Equation.theo_prob_dens(x, stand_dev, average)
 
         plt.bar(middle_values, height_values, channel_size)
         
@@ -105,31 +103,38 @@ class App(QMainWindow):
         plt.show()
 
 
-    @staticmethod
-    def calculate_average(arr):
-        return sum(arr) / len(arr)
+class Equation:
 
     @staticmethod
-    def calculate_stand_dev(arr, average, number):
+    def get_average(arr):
+        return sum(arr) / len(arr)
+
+
+    @staticmethod
+    def get_standard_deviation(arr, average, number):
         big_sum = 0
         for i in range(number):
             big_sum += (arr[i] - average)**2 / (number - 1)
         return np.sqrt(big_sum)
 
+
     @staticmethod
     def theo_prob_dens(x, stand_dev, average):
         return (1 / (stand_dev * np.sqrt(2 * np.pi))) * np.exp(-0.5 * (((x - average) / stand_dev)**2))
 
-    @staticmethod
-    def calculate_channel_size(min_val, max_val, chanels):
-        return (max_val - min_val) / chanels
 
     @staticmethod
-    def calculate_middle_values(min_val, channel_size, channel_count):
+    def get_bin_size(min_val, max_val, chanels):
+        return (max_val - min_val) / chanels
+
+
+    @staticmethod
+    def get_middle_values(min_val, channel_size, channel_count):
         values = []
         for i in range(channel_count):
             values.append(min_val + ((i + 1) - 0.5) * channel_size)
         return values
+
 
     @staticmethod
     def count_freq(arr, middle, channel_count, channel_size, round_coeff):
@@ -145,6 +150,7 @@ class App(QMainWindow):
             values[channel_count - 1].append(max(arr))
 
         return [len(i) for i in values]
+
 
     @staticmethod
     def exp_prob_dens(arr, data_count, channel_size):
