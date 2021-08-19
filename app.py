@@ -1,9 +1,10 @@
-import numpy as np 
-import matplotlib.pyplot as plt 
-import pandas as pd 
+import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pd
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QMainWindow, QApplication
 import sys
+
 
 class App(QMainWindow):
 
@@ -16,10 +17,10 @@ class App(QMainWindow):
         self.spacing_top = 200
         self.initUI()
 
-
     def initUI(self):
         self.setWindowTitle(self.title)
-        self.setGeometry(self.spacing_left, self.spacing_top, self.width, self.height)
+        self.setGeometry(self.spacing_left, self.spacing_top,
+                         self.width, self.height)
 
         self.label_file = QtWidgets.QLabel(self)
         self.label_file.setText("File name")
@@ -66,7 +67,6 @@ class App(QMainWindow):
         self.button_histogram.move(30, 290)
         self.button_histogram.clicked.connect(self.make_histogram)
 
-
     def make_histogram(self):
         file_name = self.text_file.text()
         column_name = self.text_column.text()
@@ -77,16 +77,21 @@ class App(QMainWindow):
         table = pd.read_excel(file_name)
         data = table[column_name]
         data = [data[i] for i in range(number_of_data)]
-        
+
         average = Equation.get_average(data)
         lower_bound = min(data)
         upper_bound = max(data)
-        stand_dev = Equation.get_standard_deviation(data, average, number_of_data)
+        stand_dev = Equation.get_standard_deviation(
+            data, average, number_of_data)
 
-        channel_size = Equation.get_bin_size(lower_bound, upper_bound, number_of_bins)
-        middle_values = Equation.get_middle_values(lower_bound, channel_size, number_of_bins)
-        frequency = Equation.count_freq(data, middle_values, number_of_bins, channel_size, round_coeff)
-        height_values = Equation.exp_prob_dens(frequency, number_of_data, channel_size)
+        channel_size = Equation.get_bin_size(
+            lower_bound, upper_bound, number_of_bins)
+        middle_values = Equation.get_middle_values(
+            lower_bound, channel_size, number_of_bins)
+        frequency = Equation.count_freq(
+            data, middle_values, number_of_bins, channel_size, round_coeff)
+        height_values = Equation.exp_prob_dens(
+            frequency, number_of_data, channel_size)
 
         if sum(frequency) != number_of_data:
             print("Missing data")
@@ -95,7 +100,7 @@ class App(QMainWindow):
         g_teo = Equation.theo_prob_dens(x, stand_dev, average)
 
         plt.bar(middle_values, height_values, channel_size)
-        
+
         plt.plot(x, g_teo, 'r')
         plt.xlabel("x")
         plt.ylabel("Probability Density")
@@ -109,7 +114,6 @@ class Equation:
     def get_average(arr):
         return sum(arr) / len(arr)
 
-
     @staticmethod
     def get_standard_deviation(arr, average, number):
         big_sum = 0
@@ -117,16 +121,13 @@ class Equation:
             big_sum += (arr[i] - average)**2 / (number - 1)
         return np.sqrt(big_sum)
 
-
     @staticmethod
     def theo_prob_dens(x, stand_dev, average):
         return (1 / (stand_dev * np.sqrt(2 * np.pi))) * np.exp(-0.5 * (((x - average) / stand_dev)**2))
 
-
     @staticmethod
     def get_bin_size(min_val, max_val, chanels):
         return (max_val - min_val) / chanels
-
 
     @staticmethod
     def get_middle_values(min_val, channel_size, channel_count):
@@ -135,7 +136,6 @@ class Equation:
             values.append(min_val + ((i + 1) - 0.5) * channel_size)
         return values
 
-
     @staticmethod
     def count_freq(arr, middle, channel_count, channel_size, round_coeff):
         values = [[]] * channel_count
@@ -143,14 +143,13 @@ class Equation:
             left_bound = np.round(middle[i] - channel_size / 2, round_coeff)
             right_bound = np.round(middle[i] + channel_size / 2, round_coeff)
             values[i] = [j for j in arr if j >= left_bound and j < right_bound]
-        
+
         while values[0].count(min(arr)) < arr.count(min(arr)):
             values[0].append(min(arr))
         while values[channel_count - 1].count(max(arr)) < arr.count(max(arr)):
             values[channel_count - 1].append(max(arr))
 
         return [len(i) for i in values]
-
 
     @staticmethod
     def exp_prob_dens(arr, data_count, channel_size):
