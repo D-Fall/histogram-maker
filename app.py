@@ -7,7 +7,6 @@ import sys
 
 
 class App(QMainWindow):
-
     def __init__(self):
         super(App, self).__init__()
         self.width = 500
@@ -19,8 +18,7 @@ class App(QMainWindow):
 
     def initUI(self):
         self.setWindowTitle(self.title)
-        self.setGeometry(self.spacing_left, self.spacing_top,
-                         self.width, self.height)
+        self.setGeometry(self.spacing_left, self.spacing_top, self.width, self.height)
 
         self.label_file = QtWidgets.QLabel(self)
         self.label_file.setText("File name")
@@ -81,17 +79,16 @@ class App(QMainWindow):
         average = Equation.get_average(data)
         lower_bound = min(data)
         upper_bound = max(data)
-        stand_dev = Equation.get_standard_deviation(
-            data, average, number_of_data)
+        stand_dev = Equation.get_standard_deviation(data, average, number_of_data)
 
-        channel_size = Equation.get_bin_size(
-            lower_bound, upper_bound, number_of_bins)
+        channel_size = Equation.get_bin_size(lower_bound, upper_bound, number_of_bins)
         middle_values = Equation.get_middle_values(
-            lower_bound, channel_size, number_of_bins)
+            lower_bound, channel_size, number_of_bins
+        )
         frequency = Equation.count_freq(
-            data, middle_values, number_of_bins, channel_size, round_coeff)
-        height_values = Equation.exp_prob_dens(
-            frequency, number_of_data, channel_size)
+            data, middle_values, number_of_bins, channel_size, round_coeff
+        )
+        height_values = Equation.exp_prob_dens(frequency, number_of_data, channel_size)
 
         if sum(frequency) != number_of_data:
             print("Missing data")
@@ -101,7 +98,7 @@ class App(QMainWindow):
 
         plt.bar(middle_values, height_values, channel_size)
 
-        plt.plot(x, g_teo, 'r')
+        plt.plot(x, g_teo, "r")
         plt.xlabel("x")
         plt.ylabel("Probability Density")
 
@@ -109,7 +106,6 @@ class App(QMainWindow):
 
 
 class Equation:
-
     @staticmethod
     def get_average(arr):
         return sum(arr) / len(arr)
@@ -118,12 +114,14 @@ class Equation:
     def get_standard_deviation(arr, average, number):
         big_sum = 0
         for i in range(number):
-            big_sum += (arr[i] - average)**2 / (number - 1)
+            big_sum += (arr[i] - average) ** 2 / (number - 1)
         return np.sqrt(big_sum)
 
     @staticmethod
     def theo_prob_dens(x, stand_dev, average):
-        return (1 / (stand_dev * np.sqrt(2 * np.pi))) * np.exp(-0.5 * (((x - average) / stand_dev)**2))
+        return (1 / (stand_dev * np.sqrt(2 * np.pi))) * np.exp(
+            -0.5 * (((x - average) / stand_dev) ** 2)
+        )
 
     @staticmethod
     def get_bin_size(min_val, max_val, chanels):
