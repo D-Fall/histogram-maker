@@ -8,6 +8,7 @@ import json
 
 plt.style.use(["science", "notebook", "grid"])
 DATA = "./data.json"
+STYLESHEET = "./styles.css"
 
 
 class App(QMainWindow):
@@ -72,7 +73,7 @@ class App(QMainWindow):
         self.load_data()
 
     def load_data(self):
-        self.data: dict = load_file(DATA)
+        self.data: dict = load_json(DATA)
         self.text_file.setText(self.data["file"])
         self.text_column.setText(self.data["column"])
         self.text_data.setText(self.data["data"])
@@ -133,7 +134,16 @@ def get_normal_distribution(
     )
 
 
-def load_file(filepath: str) -> dict:
+def load_file(filepath: str) -> str:
+    file_content = ""
+    with open(filepath, "r") as f:
+        for line in f.readlines():
+            file_content += line
+
+    return file_content
+
+
+def load_json(filepath: str) -> dict:
     try:
         with open(filepath, "r") as f:
             return json.load(f)
@@ -163,5 +173,7 @@ def update_file(filepath: str, data: dict) -> None:
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     win = App()
+    stylesheet = load_file(STYLESHEET)
+    win.setStyleSheet(stylesheet)
     win.show()
     sys.exit(app.exec_())
