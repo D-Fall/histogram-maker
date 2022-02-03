@@ -1,6 +1,6 @@
 # Welcome to the first version of the Histogram Maker
 
-This is an app, executed via console, that reads an Excel file and plots for you a histogram with the gaussian distribution included.
+This is an app, executed via console, that reads an Excel file and plots for you a histogram with the normal distribution included.
 
 ## Packages used
 
@@ -27,11 +27,7 @@ Then the app will ask you some questions.
 - **Column name** is the column that the program will read;
 - **Amount of data** is the number of data that the app will analyze to make the histogram;
 - **Number of bins** is how many columns you want in your histogram;
-- **Round coeffitient** is how many decimal places the app will round at the lower and upper bounds of each bin interval.
-
-## Disclaimer
-
-If the number of data in the final histogram isn't the same as the number of data analyzed, then the program will tell you that data is missing in the console. If this happens, maybe your round coeffitient is too low, but if it is not the case, then the code has a bug that should be fixed. Please, report if it happens to you.
+- **Name of the png file** is the name of the file that will be saved at a file called _/img_ in the directory of the project. Change the name and you can have multiple images. Leave the same name and the image will be updated. You don't need to put the _.png_ at the end.
 
 ## TO DO
 
