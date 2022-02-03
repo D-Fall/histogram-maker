@@ -27,7 +27,8 @@ class App(QMainWindow):
 
         self.label_file = QtWidgets.QLabel(self)
         self.label_file.setText("File name")
-        self.label_file.move(30, 30)
+        self.label_file.resize(140, 30)
+        self.label_file.move(35, 30)
 
         self.text_file = QtWidgets.QLineEdit(self)
         self.text_file.resize(350, 22)
@@ -35,7 +36,8 @@ class App(QMainWindow):
 
         self.label_column = QtWidgets.QLabel(self)
         self.label_column.setText("Column name")
-        self.label_column.move(30, 80)
+        self.label_column.resize(140, 30)
+        self.label_column.move(35, 80)
 
         self.text_column = QtWidgets.QLineEdit(self)
         self.text_column.resize(350, 22)
@@ -43,7 +45,8 @@ class App(QMainWindow):
 
         self.label_data = QtWidgets.QLabel(self)
         self.label_data.setText("Amount of data")
-        self.label_data.move(30, 130)
+        self.label_data.resize(140, 30)
+        self.label_data.move(35, 130)
 
         self.text_data = QtWidgets.QLineEdit(self)
         self.text_data.resize(350, 22)
@@ -51,7 +54,8 @@ class App(QMainWindow):
 
         self.label_bins = QtWidgets.QLabel(self)
         self.label_bins.setText("Number of bins")
-        self.label_bins.move(30, 180)
+        self.label_bins.resize(140, 30)
+        self.label_bins.move(35, 180)
 
         self.text_bins = QtWidgets.QLineEdit(self)
         self.text_bins.resize(350, 22)
@@ -59,7 +63,8 @@ class App(QMainWindow):
 
         self.label_imgname = QtWidgets.QLabel(self)
         self.label_imgname.setText("Name of the png file")
-        self.label_imgname.move(30, 230)
+        self.label_imgname.resize(140, 30)
+        self.label_imgname.move(35, 230)
 
         self.text_imgname = QtWidgets.QLineEdit(self)
         self.text_imgname.resize(350, 22)
@@ -67,6 +72,7 @@ class App(QMainWindow):
 
         self.button_histogram = QtWidgets.QPushButton(self)
         self.button_histogram.setText("Make histogram")
+        self.button_histogram.resize(350, 30)
         self.button_histogram.move(30, 290)
         self.button_histogram.clicked.connect(self.make_histogram)
 
