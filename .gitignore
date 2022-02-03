@@ -1,5 +1,6 @@
 venv/
 .vscode/
+requirements-dev.txt
 
 # Compiled source #
 ###################
