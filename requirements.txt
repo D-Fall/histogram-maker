@@ -1,4 +1,5 @@
 matplotlib
+SciencePlots
 numpy
 pandas
 xlrd
