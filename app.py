@@ -6,6 +6,7 @@ from PyQt5.QtWidgets import QMainWindow, QApplication
 import sys
 import json
 
+plt.style.use(["science", "notebook", "grid"])
 DATA = "./data.json"
 
 
@@ -90,14 +91,14 @@ class App(QMainWindow):
         if number_of_data.isdigit():
             number_of_data = int(number_of_data)
         else:
-            raise ValueError("Number of data is not a number.")
+            raise ValueError("Number of data need to be a integer.")
 
         number_of_bins = self.text_bins.text()
         self.data["bins"] = number_of_bins
         if number_of_bins.isdigit():
             number_of_bins = int(number_of_bins)
         else:
-            raise ValueError("Number of data is not a number.")
+            raise ValueError("Number of bins need to be a integer.")
 
         img_name = self.text_imgname.text()
         self.data["imgname"] = img_name
