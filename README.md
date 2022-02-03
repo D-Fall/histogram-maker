@@ -5,6 +5,7 @@ This is an app, executed via console, that reads an Excel file and plots for you
 ## Packages used
 
 - matplotlib
+- SciencePlots
 - numpy
 - pandas
 - xlrd
