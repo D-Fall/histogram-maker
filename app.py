@@ -4,6 +4,9 @@ import pandas as pd
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QMainWindow, QApplication
 import sys
+import json
+
+DATA = "./data.json"
 
 
 class App(QMainWindow):
@@ -52,14 +55,6 @@ class App(QMainWindow):
         self.text_bins.resize(350, 22)
         self.text_bins.move(30, 205)
 
-        self.label_round = QtWidgets.QLabel(self)
-        self.label_round.setText("Round coefficient")
-        self.label_round.move(30, 230)
-
-        self.text_round = QtWidgets.QLineEdit(self)
-        self.text_round.resize(350, 22)
-        self.text_round.move(30, 255)
-
         self.button_histogram = QtWidgets.QPushButton(self)
         self.button_histogram.setText("Make histogram")
         self.button_histogram.move(30, 290)
@@ -70,90 +65,32 @@ class App(QMainWindow):
         column_name = self.text_column.text()
         number_of_data = int(self.text_data.text())
         number_of_bins = int(self.text_bins.text())
-        round_coeff = int(self.text_round.text())
 
         table = pd.read_excel(file_name)
-        data = table[column_name]
-        data = [data[i] for i in range(number_of_data)]
+        data: list[float] = table[column_name][:number_of_data]
 
-        average = Equation.get_average(data)
+        average = np.mean(data)
         lower_bound = min(data)
         upper_bound = max(data)
-        stand_dev = Equation.get_standard_deviation(data, average, number_of_data)
-
-        channel_size = Equation.get_bin_size(lower_bound, upper_bound, number_of_bins)
-        middle_values = Equation.get_middle_values(
-            lower_bound, channel_size, number_of_bins
-        )
-        frequency = Equation.count_freq(
-            data, middle_values, number_of_bins, channel_size, round_coeff
-        )
-        height_values = Equation.exp_prob_dens(frequency, number_of_data, channel_size)
-
-        if sum(frequency) != number_of_data:
-            print("Missing data")
+        stand_dev = np.std(data)
 
         x = np.linspace(lower_bound, upper_bound, 1000)
-        g_teo = Equation.theo_prob_dens(x, stand_dev, average)
+        g_teo = get_normal_distribution(x, stand_dev, average)
 
-        plt.bar(middle_values, height_values, channel_size)
+        plt.hist(data, bins=number_of_bins, density=True)
 
-        plt.plot(x, g_teo, "r")
-        plt.xlabel("x")
-        plt.ylabel("Probability Density")
+        plt.plot(x, g_teo, "r", label="Normal distribution")
+        plt.xlabel("$x$")
+        plt.ylabel("Density")
+        plt.legend()
 
         plt.show()
 
 
-class Equation:
-    @staticmethod
-    def get_average(arr):
-        return sum(arr) / len(arr)
-
-    @staticmethod
-    def get_standard_deviation(arr, average, number):
-        big_sum = 0
-        for i in range(number):
-            big_sum += (arr[i] - average) ** 2 / (number - 1)
-        return np.sqrt(big_sum)
-
-    @staticmethod
-    def theo_prob_dens(x, stand_dev, average):
-        return (1 / (stand_dev * np.sqrt(2 * np.pi))) * np.exp(
-            -0.5 * (((x - average) / stand_dev) ** 2)
-        )
-
-    @staticmethod
-    def get_bin_size(min_val, max_val, chanels):
-        return (max_val - min_val) / chanels
-
-    @staticmethod
-    def get_middle_values(min_val, channel_size, channel_count):
-        values = []
-        for i in range(channel_count):
-            values.append(min_val + ((i + 1) - 0.5) * channel_size)
-        return values
-
-    @staticmethod
-    def count_freq(arr, middle, channel_count, channel_size, round_coeff):
-        values = [[]] * channel_count
-        for i in range(channel_count):
-            left_bound = np.round(middle[i] - channel_size / 2, round_coeff)
-            right_bound = np.round(middle[i] + channel_size / 2, round_coeff)
-            values[i] = [j for j in arr if j >= left_bound and j < right_bound]
-
-        while values[0].count(min(arr)) < arr.count(min(arr)):
-            values[0].append(min(arr))
-        while values[channel_count - 1].count(max(arr)) < arr.count(max(arr)):
-            values[channel_count - 1].append(max(arr))
-
-        return [len(i) for i in values]
-
-    @staticmethod
-    def exp_prob_dens(arr, data_count, channel_size):
-        frequency = list(map(lambda x: x / data_count, arr))
-        prob_dens = list(map(lambda x: x / channel_size, frequency))
-        return prob_dens
+def get_normal_distribution(x_range, std, mean):
+    return (1 / (std * np.sqrt(2 * np.pi))) * np.exp(
+        -0.5 * (((x_range - mean) / std) ** 2)
+    )
 
 
 if __name__ == "__main__":
