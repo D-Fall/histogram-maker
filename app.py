@@ -141,12 +141,8 @@ def get_normal_distribution(
 
 
 def load_file(filepath: str) -> str:
-    file_content = ""
     with open(filepath, "r") as f:
-        for line in f.readlines():
-            file_content += line
-
-    return file_content
+        return f.read()
 
 
 def load_json(filepath: str) -> dict:
