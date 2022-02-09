@@ -27,7 +27,7 @@ Then the app will ask you some questions.
 - **File name** is just the name of the file with extention;
 - **Column name** is the column that the program will read;
 - **Amount of data** is the number of data that the app will analyze to make the histogram;
-- **Number of bins** is how many columns you want in your histogram;
+- **Number of bins** is how many columns (bins) you want in your histogram. A good reference value is an odd number close to the square root of the amount of data;
 - **Name of the png file** is the name of the file that will be saved at a file called _/img_ in the directory of the project. Change the name and you can have multiple images. Leave the same name and the image will be updated. You don't need to put the _.png_ at the end.
 
 ## TO DO
