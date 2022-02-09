@@ -16,8 +16,8 @@ STYLESHEET = "./styles.css"
 class App(QMainWindow):
     def __init__(self):
         super(App, self).__init__()
-        self.width = 500
-        self.height = 400
+        self.width = 800
+        self.height = 700
         self.title = "Histogram Maker"
         self.spacing_left = 200
         self.spacing_top = 200
@@ -107,14 +107,14 @@ class App(QMainWindow):
         if number_of_data.isdigit():
             number_of_data = int(number_of_data)
         else:
-            raise ValueError("Number of data need to be a integer.")
+            raise ValueError("Number of data needs to be an integer.")
 
         number_of_bins = self.text_bins.text()
         self.data["bins"] = number_of_bins
         if number_of_bins.isdigit():
             number_of_bins = int(number_of_bins)
         else:
-            raise ValueError("Number of bins need to be a integer.")
+            raise ValueError("Number of bins needs to be an integer.")
 
         img_name = self.text_imgname.text()
         self.data["imgname"] = img_name
