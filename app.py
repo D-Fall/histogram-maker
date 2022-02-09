@@ -2,7 +2,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 from PyQt5 import QtWidgets
+from PyQt5 import QtGui
 from PyQt5.QtWidgets import QMainWindow, QApplication
+from PyQt5.QtCore import Qt
 import sys
 import json
 
@@ -76,6 +78,13 @@ class App(QMainWindow):
         self.button_histogram.move(30, 290)
         self.button_histogram.clicked.connect(self.make_histogram)
 
+        self.img_label = QtWidgets.QLabel(self)
+        self.img_label.setObjectName("img-label")
+        self.img_label.resize(711, 525)
+        self.img_label.move(420, 30)
+        self.img_label.setText("Histogram")
+        self.img_label.setAlignment(Qt.AlignCenter)
+
         self.load_data()
 
     def load_data(self):
@@ -128,13 +137,14 @@ class App(QMainWindow):
         plt.xlabel("$x$")
         plt.ylabel("Density")
         plt.legend()
-        plt.savefig(f"img/{img_name}.png", dpi=200)
-        plt.show()
+        plt.savefig(f"./img/{img_name}.png", dpi=200)
+
+        histogram_img = QtGui.QPixmap(f"./img/{img_name}.png")
+        self.img_label.setPixmap(histogram_img)
+        self.img_label.setScaledContents(True)
 
 
-def get_normal_distribution(
-    x_range: list[float], std: float, mean: float
-) -> list[float]:
+def get_normal_distribution(x_range: np.array, std: float, mean: float) -> np.array:
     return (1 / (std * np.sqrt(2 * np.pi))) * np.exp(
         -0.5 * (((x_range - mean) / std) ** 2)
     )

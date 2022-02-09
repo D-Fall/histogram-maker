@@ -8,6 +8,10 @@ QLabel {
   border: 1px solid black;
 }
 
+QLabel#img-label {
+  border-radius: 0;
+}
+
 QLineEdit {
   background-color: #f1faee;
   border-radius: 5px;
