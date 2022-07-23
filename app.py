@@ -15,7 +15,7 @@ STYLESHEET = "./styles.css"
 
 class App(QMainWindow):
     def __init__(self):
-        super(App, self).__init__()
+        super().__init__()
         self.width = 800
         self.height = 700
         self.title = "Histogram Maker"
