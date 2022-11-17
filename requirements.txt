@@ -1,6 +1,7 @@
 matplotlib
 SciencePlots
 numpy
+scipy
 pandas
 xlrd
 openpyxl
