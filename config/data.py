@@ -6,6 +6,6 @@ from pathlib import Path
 class Data:
     file: Path
     column: str
-    data: int
+    amount: int
     bins: int
     imgname: str
