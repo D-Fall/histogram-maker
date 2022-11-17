@@ -21,9 +21,9 @@ class App(QMainWindow):
         self.title = "Histogram Maker"
         self.spacing_left = 200
         self.spacing_top = 200
-        self.initUI()
+        self.init_ui()
 
-    def initUI(self):
+    def init_ui(self):
         self.setWindowTitle(self.title)
         self.setGeometry(self.spacing_left, self.spacing_top, self.width, self.height)
 
