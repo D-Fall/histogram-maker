@@ -1,5 +1,4 @@
 import sys
-from pathlib import Path
 
 from PyQt5.QtWidgets import QApplication
 
@@ -8,7 +7,7 @@ from ui.gui import App
 
 
 def main() -> None:
-    stylesheet: str = Path(STYLESHEET).read_text()
+    stylesheet: str = STYLESHEET.read_text()
 
     app = QApplication(sys.argv)
     win = App()
