@@ -1,12 +1,16 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
+from scipy.stats import norm
+
 from PyQt5 import QtWidgets
 from PyQt5 import QtGui
 from PyQt5.QtWidgets import QMainWindow, QApplication
 from PyQt5.QtCore import Qt
+
 import sys
 import json
+from pathlib import Path
 
 plt.style.use(["science", "notebook", "grid"])
 DATA = "./data.json"
@@ -129,8 +133,8 @@ class App(QMainWindow):
         upper_bound = max(data)
         stand_dev = np.std(data)
 
-        x = np.linspace(lower_bound, upper_bound, 1000)
-        f = get_normal_distribution(x, stand_dev, average)
+        x = np.linspace(lower_bound, upper_bound, 100)
+        f = norm.pdf(x, average, stand_dev)
 
         plt.hist(data, bins=number_of_bins, density=True)
         plt.plot(x, f, "r", label="Normal distribution")
@@ -142,17 +146,6 @@ class App(QMainWindow):
         histogram_img = QtGui.QPixmap(f"./img/{img_name}.png")
         self.img_label.setPixmap(histogram_img)
         self.img_label.setScaledContents(True)
-
-
-def get_normal_distribution(x_range: np.array, std: float, mean: float) -> np.array:
-    return (1 / (std * np.sqrt(2 * np.pi))) * np.exp(
-        -0.5 * (((x_range - mean) / std) ** 2)
-    )
-
-
-def load_file(filepath: str) -> str:
-    with open(filepath, "r") as f:
-        return f.read()
 
 
 def load_json(filepath: str) -> dict:
@@ -185,7 +178,7 @@ def update_file(filepath: str, data: dict) -> None:
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     win = App()
-    stylesheet = load_file(STYLESHEET)
+    stylesheet = Path(STYLESHEET).read_text()
     win.setStyleSheet(stylesheet)
     win.show()
     sys.exit(app.exec_())
