@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 from PyQt5 import QtWidgets
 from PyQt5 import QtGui
-from PyQt5.QtWidgets import QMainWindow, QApplication
+from PyQt5.QtWidgets import QMainWindow
 from PyQt5.QtCore import Qt
 
 from config.handlers import load_json, update_file
