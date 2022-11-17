@@ -1,6 +1,7 @@
 venv/
 .vscode/
 requirements-dev.txt
+__pycache__/
 
 # Compiled source #
 ###################
