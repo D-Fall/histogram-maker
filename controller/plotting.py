@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from numpy import array
 
 
-def plot_and_save_hist(
+def create_hist(
     func_axes: tuple[array, array],
     data: list[float],
     bins: int,
