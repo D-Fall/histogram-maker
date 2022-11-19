@@ -7,7 +7,7 @@ from model.data import (
     load_json_data,
     update_json_data,
     update_json_file,
-    read_spreadsheet,
+    read_column,
 )
 
 
@@ -77,8 +77,8 @@ def test_update_json_file(mock_folder: Path) -> None:
     update_json_file(path, {"update_me": 1})
 
 
-def test_read_spreadsheet() -> None:
+def test_read_column() -> None:
     path: Path = Path.cwd() / "test.xlsx"
-    data = read_spreadsheet(path, "a (m/s^2)", 10)
+    data = read_column(path, "a (m/s^2)")[:10]
     for value in data:
         assert round(value) == 10
