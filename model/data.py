@@ -4,8 +4,6 @@ from pathlib import Path
 
 from pandas import read_excel, DataFrame, Series
 
-from helpers.data_validation import validate_int
-
 
 @dataclass
 class RawData:
@@ -29,8 +27,8 @@ def refine_data(data: RawData) -> Data:
     return Data(
         file=Path.cwd() / data.file,
         column=data.column,
-        amount=validate_int(data.amount),
-        bins=validate_int(data.bins),
+        amount=int(data.amount),
+        bins=int(data.bins),
         imgname=data.imgname,
     )
 
