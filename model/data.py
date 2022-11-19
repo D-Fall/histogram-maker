@@ -4,25 +4,54 @@ from pathlib import Path
 
 from pandas import read_excel, DataFrame, Series
 
+from helpers.data_validation import validate_int
+
 
 @dataclass
-class Data:
-    file: Path = ""
+class RawData:
+    file: str = ""
     column: str = ""
-    amount: int = ""
-    bins: int = ""
+    amount: str = ""
+    bins: str = ""
     imgname: str = "histogram"
 
 
-def load_json_data(filepath: Path) -> Data:
+@dataclass
+class Data:
+    file: Path
+    column: str
+    amount: int
+    bins: int
+    imgname: str
+
+
+def refine_data(data: RawData) -> Data:
+    return Data(
+        file=Path.cwd() / data.file,
+        column=data.column,
+        amount=validate_int(data.amount),
+        bins=validate_int(data.bins),
+        imgname=data.imgname,
+    )
+
+
+def to_raw(data: Data) -> RawData:
+    raw_data = {}
+    for name, value in data.__dict__.items():
+        raw_data[name] = str(value)
+
+    return RawData(**raw_data)
+
+
+def load_raw_data(filepath: Path) -> Data:
     try:
         with open(filepath, "r") as data_file:
             data: dict[str, str] = json.load(data_file)
-            return Data(**data)
+            return RawData(**data)
     except FileNotFoundError:
-        return Data()
+        return RawData()
     except json.JSONDecodeError:
-        return Data()
+        return RawData()
 
 
 def update_json_file(filepath: Path, data: dict) -> None:
@@ -30,7 +59,7 @@ def update_json_file(filepath: Path, data: dict) -> None:
         json.dump(data, json_file, indent=2)
 
 
-def update_json_data(filepath: Path, data: Data) -> None:
+def update_raw_data(filepath: Path, data: RawData) -> None:
     with open(filepath, "w") as data_file:
         json.dump(data.__dict__, data_file, indent=2)
 
