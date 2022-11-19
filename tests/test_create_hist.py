@@ -14,6 +14,6 @@ def test_create_hist() -> None:
     if file_path.exists():
         file_path.unlink()
 
-    create_hist((x, y), data, 7, file_path)
+    create_hist((x, y), data, 7, file_path.name)
 
     assert file_path.exists() == True
