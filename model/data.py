@@ -2,6 +2,8 @@ import json
 from dataclasses import dataclass
 from pathlib import Path
 
+from pandas import read_excel, DataFrame, Series
+
 
 @dataclass
 class Data:
@@ -31,3 +33,8 @@ def update_json_file(filepath: Path, data: dict) -> None:
 def update_json_data(filepath: Path, data: Data) -> None:
     with open(filepath, "w") as data_file:
         json.dump(data.__dict__, data_file, indent=2)
+
+
+def read_spreadsheet(filepath: Path, column: str, limit: int) -> Series:
+    data_frame: DataFrame = read_excel(filepath)
+    return data_frame[column][:limit]
