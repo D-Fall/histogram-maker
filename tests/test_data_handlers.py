@@ -2,7 +2,13 @@ import pytest
 
 from pathlib import Path
 
-from model.data import Data, load_json_data, update_json_data, update_json_file
+from model.data import (
+    Data,
+    load_json_data,
+    update_json_data,
+    update_json_file,
+    read_spreadsheet,
+)
 
 
 @pytest.fixture
@@ -69,3 +75,10 @@ def test_update_json_file(mock_folder: Path) -> None:
     assert line == '  "update_me": 2\n'
 
     update_json_file(path, {"update_me": 1})
+
+
+def test_read_spreadsheet() -> None:
+    path: Path = Path.cwd() / "test.xlsx"
+    data = read_spreadsheet(path, "a (m/s^2)", 10)
+    for value in data:
+        assert round(value) == 10
