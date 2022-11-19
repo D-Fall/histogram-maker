@@ -48,3 +48,8 @@ xlsx) and plots for you a histogram with the normal distribution included.
 # TODO
 
 1. Make a way to take a path to a spreadsheet file.
+2. Make a way to recieve integers from the input boxes
+
+   - Study about QDoubleValidator
+
+3. Save integers
