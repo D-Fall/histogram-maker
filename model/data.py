@@ -35,6 +35,6 @@ def update_json_data(filepath: Path, data: Data) -> None:
         json.dump(data.__dict__, data_file, indent=2)
 
 
-def read_spreadsheet(filepath: Path, column: str, limit: int) -> Series:
+def read_column(filepath: Path, column: str) -> Series:
     data_frame: DataFrame = read_excel(filepath)
-    return data_frame[column][:limit]
+    return data_frame[column]
