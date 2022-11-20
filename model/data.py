@@ -2,66 +2,60 @@ import json
 from dataclasses import dataclass
 from pathlib import Path
 
-from pandas import read_excel, DataFrame, Series
+from pandas import read_excel, DataFrame
 
-
-@dataclass
-class RawData:
-    file: str = ""
-    column: str = ""
-    amount: str = ""
-    bins: str = ""
-    imgname: str = "histogram"
+DataDict = dict[str, Path | str | int]
 
 
 @dataclass
 class Data:
-    file: Path
-    column: str
-    amount: int
-    bins: int
-    imgname: str
+    file: Path = Path.cwd()
+    column: str = ""
+    amount: int = 0
+    bins: int = 0
+    imgname: str = ""
 
 
-def refine_data(data: RawData) -> Data:
-    return Data(
-        file=Path.cwd() / data.file,
-        column=data.column,
-        amount=int(data.amount),
-        bins=int(data.bins),
-        imgname=data.imgname,
-    )
+def read_data(filepath: Path) -> Data:
+    """
+    Reads the data json file and make it available to the code in the form of a
+    Data class.
 
-
-def to_raw(data: Data) -> RawData:
-    raw_data = {}
-    for name, value in data.__dict__.items():
-        raw_data[name] = str(value)
-
-    return RawData(**raw_data)
-
-
-def load_raw_data(filepath: Path) -> Data:
+    In the case of any exceptions, it returns a template with the default values
+    of each field.
+    """
     try:
         with open(filepath, "r") as data_file:
-            data: dict[str, str] = json.load(data_file)
-            return RawData(**data)
+            data: DataDict = json.load(data_file)
+            data["file"] = Path.cwd() / data["file"]
+            return Data(**data)
     except FileNotFoundError:
-        return RawData()
+        return Data()
     except json.JSONDecodeError:
-        return RawData()
+        return Data()
 
 
-def update_json_file(filepath: Path, data: dict) -> None:
-    with open(filepath, "w") as json_file:
-        json.dump(data, json_file, indent=2)
+def save_data(filepath: Path, data: Data) -> None:
+    """
+    Reads a Data object and saves it to a data json file.
 
+    Path objects cannot be saved in json, so only the name of the file, if
+    exists, is stored.
+    """
+    data_d: DataDict = data.__dict__
+    data_d["file"] = data.file.name if data.file != Path.cwd() else ""
 
-def update_raw_data(filepath: Path, data: RawData) -> None:
     with open(filepath, "w") as data_file:
-        json.dump(data.__dict__, data_file, indent=2)
+        json.dump(data_d, data_file, indent=2)
 
 
-def read_column(filepath: Path, column: str) -> Series:
+def read_column(filepath: Path, column: str) -> list[float]:
+    """
+    Uses pandas to read a spreadsheet file (.xlsx, .xls) and return the data
+    from a column.
+
+    The actual return type is pd.Serial, but it can be treated just like an list
+    of floats.
+    """
     data_frame: DataFrame = read_excel(filepath)
     return data_frame[column]
