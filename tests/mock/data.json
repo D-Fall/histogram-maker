@@ -1,7 +1,7 @@
 {
   "file": "test.xlsx",
   "column": "g (m/s^2)",
-  "amount": "100",
-  "bins": "7",
+  "amount": 100,
+  "bins": 7,
   "imgname": "histogram"
 }
