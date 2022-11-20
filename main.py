@@ -33,7 +33,7 @@ def main() -> None:
     data: Data = read_data(DATA_PATH)
     save_data_fn = partial(save_data, DATA_PATH)
 
-    with init_app(QApplication(sys.argv)) as app:
+    with init_app(QApplication(sys.argv)):
         win = Window(
             data=data,
             stylesheet=stylesheet,
