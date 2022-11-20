@@ -20,7 +20,7 @@ xlsx) and plots for you a histogram with the normal distribution included.
 - pandas
 - xlrd
 - openpyxl
-- PyQt5
+- PySide6
 
 ## Instructions
 
