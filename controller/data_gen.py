@@ -7,10 +7,13 @@ def norm_axes(
     end: int,
     mean: float = 0,
     std: float = 1,
+    graph_smoothness: int = 100,
 ) -> tuple[array, array]:
-    # TODO: maybe not hardcode 100
-    # instead, make a graph_smoothness config
-    x = linspace(start, end, 100)
+    """
+    Generate the x and y values, i.e. the axes, for the normal probability
+    density function.
+    """
+    x = linspace(start, end, graph_smoothness)
     y = norm.pdf(x, mean, std)
 
     return x, y
