@@ -10,7 +10,7 @@ from controller.data_gen import norm_axes
 from controller.data_process import get_stats
 from model.data import read_column, read_data, save_data, Data
 
-STYLESHEET: Path = Path.cwd() / "styles.css"
+STYLESHEET: Path = Path.cwd() / "styles.qss"
 DATA_PATH: Path = Path.cwd() / "data.json"
 
 
