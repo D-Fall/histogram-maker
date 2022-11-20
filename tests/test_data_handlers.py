@@ -3,13 +3,9 @@ import pytest
 from pathlib import Path
 
 from model.data import (
-    RawData,
     Data,
-    refine_data,
-    to_raw,
-    load_raw_data,
-    update_raw_data,
-    update_json_file,
+    read_data,
+    save_data,
     read_column,
 )
 
@@ -17,19 +13,6 @@ from model.data import (
 @pytest.fixture
 def mock_folder() -> Path:
     return Path.cwd() / "tests/mock/"
-
-
-@pytest.fixture
-def right_raw_data() -> RawData:
-    return RawData(
-        **{
-            "file": "test.xlsx",
-            "column": "g (m/s^2)",
-            "amount": "100",
-            "bins": "7",
-            "imgname": "histogram",
-        }
-    )
 
 
 @pytest.fixture
@@ -45,42 +28,29 @@ def right_data() -> Data:
     )
 
 
-def test_refine_data(right_raw_data: RawData) -> None:
-    data: Data = refine_data(right_raw_data)
-    assert isinstance(data.file, Path)
-    assert isinstance(data.amount, int)
-    assert isinstance(data.bins, int)
-
-
-def test_to_raw(right_data: Data) -> None:
-    raw_data: RawData = to_raw
-    for value in raw_data.__dict__.values():
-        assert isinstance(value, str)
-
-
-def test_load_raw_data(mock_folder: Path, right_raw_data: RawData) -> None:
+def test_read_data(mock_folder: Path, right_data: Data) -> None:
     path: Path = mock_folder / "data.json"
-    data: RawData = load_raw_data(path)
-    assert data == right_raw_data
+    data: Data = read_data(path)
+    assert data == right_data
 
     path = mock_folder / "invalid_json.json"
-    data = load_raw_data(path)
-    assert data == RawData()
+    data = read_data(path)
+    assert data == Data()
 
     path = mock_folder / "dont_exist.json"
-    data = load_raw_data(path)
-    assert data == RawData()
+    data = read_data(path)
+    assert data == Data()
 
 
-def test_fail_to_load_raw_data(mock_folder: Path) -> None:
+def test_fail_to_read_data(mock_folder: Path) -> None:
     path: Path = mock_folder / "wrong_data.json"
     with pytest.raises(TypeError):
-        load_raw_data(path)
+        read_data(path)
 
 
-def test_update_raw_data(mock_folder: Path) -> None:
+def test_save_data(mock_folder: Path) -> None:
     path: Path = mock_folder / "updatable_data.json"
-    update_raw_data(path, RawData(imgname="updated"))
+    save_data(path, Data(imgname="updated"))
 
     with path.open() as file:
         for _ in range(5):
@@ -89,21 +59,7 @@ def test_update_raw_data(mock_folder: Path) -> None:
 
     assert line == '  "imgname": "updated"\n'
 
-    update_raw_data(path, RawData())
-
-
-def test_update_json_file(mock_folder: Path) -> None:
-    path: Path = mock_folder / "updatable.json"
-
-    update_json_file(path, {"update_me": 2})
-
-    with path.open() as file:
-        file.readline()
-        line = file.readline()
-
-    assert line == '  "update_me": 2\n'
-
-    update_json_file(path, {"update_me": 1})
+    save_data(path, Data())
 
 
 def test_read_column() -> None:
