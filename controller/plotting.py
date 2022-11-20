@@ -10,6 +10,9 @@ def create_hist(
     bins: int,
     filename: str,
 ) -> None:
+    """
+    Create the histogram png file.
+    """
     if not filename.endswith(".png"):
         filename += ".png"
 
@@ -23,3 +26,4 @@ def create_hist(
     plt.ylabel("Density")
     plt.legend()
     plt.savefig(path, dpi=200)
+    plt.close()
