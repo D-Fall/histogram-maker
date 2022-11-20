@@ -5,4 +5,4 @@ scipy
 pandas
 xlrd
 openpyxl
-PyQt5
+PySide6
