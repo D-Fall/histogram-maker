@@ -1,8 +1,5 @@
-import sys
 from pathlib import Path
 from functools import partial
-
-from PyQt5.QtWidgets import QApplication
 
 from view.gui import Window, init_app
 from controller.plotting import create_hist
@@ -33,7 +30,7 @@ def main() -> None:
     data: Data = read_data(DATA_PATH)
     save_data_fn = partial(save_data, DATA_PATH)
 
-    with init_app(QApplication(sys.argv)):
+    with init_app():
         win = Window(
             data=data,
             stylesheet=stylesheet,
