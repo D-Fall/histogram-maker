@@ -3,6 +3,7 @@ QMainWindow {
 }
 
 QLabel {
+  color: black;
   background-color: #a8dadc;
   border-radius: 5px;
   border: 1px solid black;
@@ -13,6 +14,7 @@ QLabel#img-label {
 }
 
 QLineEdit {
+  color: black;
   background-color: #f1faee;
   border-radius: 5px;
   border: 1px solid black;
