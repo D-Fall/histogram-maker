@@ -7,13 +7,13 @@ from PySide6.QtCore import Qt
 from model.data import Data
 
 from pathlib import Path
-from typing import Callable
+from typing import Callable, Iterator
 from contextlib import contextmanager
 import sys
 
 
 @contextmanager
-def init_app() -> None:
+def init_app() -> Iterator:
     """
     Context manager to safely exit the app.
     """
