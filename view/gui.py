@@ -1,168 +1,170 @@
-from PySide6 import QtWidgets
-from PySide6 import QtGui
-from PySide6.QtWidgets import QMainWindow, QApplication
-from PySide6.QtCore import Qt
-
-
-from model.data_handle import Data
-
+from functools import partial
 from pathlib import Path
-from typing import Callable, Iterator
-from contextlib import contextmanager
-import sys
+from typing import Callable
+
+import flet as ft
+from flet.matplotlib_chart import MatplotlibChart
+from flet.file_picker import FilePickerFile
+from matplotlib.figure import Figure
+
+from model.spreadsheet import get_data_frame
+from model.data import Data
 
 
-@contextmanager
-def init_app() -> Iterator:
-    """
-    Context manager to safely exit the app.
-    """
-    app = QApplication(sys.argv)
-    yield app
-    sys.exit(app.exec_())
-
-
-class Window(QMainWindow):
+class App:
     def __init__(
         self,
+        page: ft.Page,
         data: Data,
-        stylesheet: str,
-        create_hist_fn: Callable[[Data], None],
+        create_histogram_fn: Callable[[Data], Figure],
         save_data_fn: Callable[[Data], None],
-    ) -> None:
-        super().__init__()
-
+    ):
+        self.page = page
         self.data = data
-        self.create_hist_fn = create_hist_fn
+        self.create_histogram_fn = create_histogram_fn
         self.save_data_fn = save_data_fn
 
-        self.win_width = 800
-        self.win_height = 700
-        self.title = "Histogram Maker"
-        self.spacing_left = 200
-        self.spacing_top = 200
-
         self.init_ui()
-        self.setStyleSheet(stylesheet)
+        self.load_data()
 
     def init_ui(self):
-        self.setWindowTitle(self.title)
-        self.setGeometry(
-            self.spacing_left,
-            self.spacing_top,
-            self.win_width,
-            self.win_height,
+        pick_files_dialog = ft.FilePicker(on_result=self.on_file_pick)
+        pick_files = partial(
+            pick_files_dialog.pick_files,
+            initial_directory=Path.cwd().as_posix(),
+            allow_multiple=False,
         )
 
-        self.label_file = QtWidgets.QLabel(self)
-        self.label_file.setText("File name")
-        self.label_file.resize(140, 30)
-        self.label_file.move(35, 30)
+        self.page.overlay.append(pick_files_dialog)
 
-        self.text_file = QtWidgets.QLineEdit(self)
-        self.text_file.resize(350, 22)
-        self.text_file.move(30, 55)
-
-        self.label_column = QtWidgets.QLabel(self)
-        self.label_column.setText("Column name")
-        self.label_column.resize(140, 30)
-        self.label_column.move(35, 80)
-
-        self.text_column = QtWidgets.QLineEdit(self)
-        self.text_column.resize(350, 22)
-        self.text_column.move(30, 105)
-
-        self.label_data = QtWidgets.QLabel(self)
-        self.label_data.setText("Amount of data")
-        self.label_data.resize(140, 30)
-        self.label_data.move(35, 130)
-
-        self.text_amount = QtWidgets.QLineEdit(self)
-        self.text_amount.setValidator(QtGui.QIntValidator(0, 10_000, self))
-        self.text_amount.resize(350, 22)
-        self.text_amount.move(30, 155)
-
-        self.label_bins = QtWidgets.QLabel(self)
-        self.label_bins.setText("Number of bins")
-        self.label_bins.resize(140, 30)
-        self.label_bins.move(35, 180)
-
-        self.text_bins = QtWidgets.QLineEdit(self)
-        self.text_bins.setValidator(QtGui.QIntValidator(0, 100, self))
-        self.text_bins.resize(350, 22)
-        self.text_bins.move(30, 205)
-
-        self.label_imgname = QtWidgets.QLabel(self)
-        self.label_imgname.setText("Name of the png file")
-        self.label_imgname.resize(140, 30)
-        self.label_imgname.move(35, 230)
-
-        self.text_imgname = QtWidgets.QLineEdit(self)
-        self.text_imgname.resize(350, 22)
-        self.text_imgname.move(30, 255)
-
-        self.img_label = QtWidgets.QLabel(self)
-        self.img_label.setObjectName("img-label")
-        self.img_label.resize(711, 525)
-        self.img_label.move(420, 30)
-        self.img_label.setText("Histogram")
-        self.img_label.setAlignment(Qt.AlignCenter)
-
-        self.button_histogram = QtWidgets.QPushButton(self)
-        self.button_histogram.setText("Generate histogram")
-        self.button_histogram.resize(350, 30)
-        self.button_histogram.move(30, 290)
-        self.button_histogram.clicked.connect(self.gen_hist)
-
-        self.load_old_data()
-
-    def load_old_data(self):
-        """
-        Load the data json file into the app input boxes.
-        """
-        self.text_file.setText(self.data.file.name)
-        self.text_column.setText(self.data.column)
-        self.text_amount.setText(str(self.data.amount))
-        self.text_bins.setText(str(self.data.bins))
-        self.text_imgname.setText(self.data.imgname)
-
-    def get_app_data(self) -> Data:
-        """
-        Make a data object based of the content of the app input boxes.
-        """
-        return Data(
-            file=Path.cwd() / self.text_file.text(),
-            column=self.text_column.text(),
-            amount=int(self.text_amount.text()),
-            bins=int(self.text_bins.text()),
-            imgname=self.text_imgname.text(),
+        self.file_name = ft.Text()
+        self.pick_file = ft.ElevatedButton(
+            text="Pick spreadsheet file",
+            icon=ft.icons.FILE_OPEN,
+            on_click=pick_files,
+        )
+        self.column_name = ft.Dropdown(label="Column")
+        self.amount = ft.TextField(label="Amount of data")
+        self.bins = ft.TextField(label="Amount of bins")
+        self.create_histogram_btn = ft.ElevatedButton(
+            text="Create histogram",
+            icon=ft.icons.BAR_CHART,
+            on_click=self.create_histogram,
         )
 
-    def draw_image(self) -> None:
-        """
-        Pick up the image file and draw it on the app.
-        """
-        img_file = (
-            self.data.imgname
-            if self.data.imgname.endswith(".png")
-            else self.data.imgname + ".png"
+        self.inputs = ft.Column(
+            controls=[
+                self.file_name,
+                self.pick_file,
+                self.column_name,
+                self.amount,
+                self.bins,
+                self.create_histogram_btn,
+            ],
         )
-        img_path = Path.cwd() / "img" / img_file
 
-        img = QtGui.QPixmap(str(img_path))
-        self.img_label.setPixmap(img)
-        self.img_label.setScaledContents(True)
+        self.chart = MatplotlibChart(expand=True)
 
-    def gen_hist(self):
-        """
-        Responsible for collecting the data from the app, provide the data to
-        the histogram creation function, draw the image and then save the data
-        provided by the app to the data file.
-        """
-        app_data: Data = self.get_app_data()
+        main_content = ft.Row(
+            controls=[
+                self.inputs,
+                self.chart,
+            ]
+        )
 
-        self.create_hist_fn(app_data)
+        background = ft.Container(content=main_content)
 
-        self.draw_image()
+        self.page.add(background)
 
-        self.save_data_fn(app_data)
+    def load_data(self) -> None:
+        if self.data is None:
+            self.file_name.value = "No file selected."
+            self.column_name.visible = False
+
+            self.data = Data(
+                spreadsheet_file=Path(""),
+                column="",
+                amount=0,
+                bins=0,
+            )
+
+            self.page.update()
+        else:
+            file_name = self.data.spreadsheet_file.name
+            self.file_name.value = file_name
+
+            data_frame = get_data_frame(self.data.spreadsheet_file)
+            options = [ft.dropdown.Option(column_name) for column_name in data_frame]
+
+            self.column_name.visible = True
+            self.column_name.options = options
+            self.column_name.value = self.data.column
+
+            self.amount.value = self.data.amount or ""
+            self.bins.value = self.data.bins or ""
+
+            self.page.update()
+
+    def on_file_pick(self, e: ft.FilePickerResultEvent) -> None:
+        if e.files:
+            file: FilePickerFile = e.files[0]
+            self.file_name.value = file.name
+            self.data.spreadsheet_file = Path(file.path)
+
+            self.load_data()
+
+            self.page.update()
+
+    def update_data(self) -> None:
+        for input_dialog in self.inputs.controls[1:]:
+            if isinstance(input_dialog, ft.ElevatedButton):
+                print(f"{input_dialog} is a button")
+                continue
+
+            if not input_dialog.value:
+                print(f"no value in {input_dialog}")
+                return None
+
+        self.data.column = self.column_name.value
+        self.data.amount = int(self.amount.value)
+        self.data.bins = int(self.bins.value)
+
+    def create_histogram(self, e) -> None:
+        self.update_data()
+        if self.data is None:
+            return None
+
+        fig: Figure = self.create_histogram_fn(self.data)
+        self.chart.figure = fig
+
+        self.save_data_fn(self.data)
+
+        self.page.update()
+
+
+def run_app(
+    data: Data,
+    create_histogram_fn: Callable[[Data], Figure],
+    save_data_fn: Callable[[Data], None],
+) -> None:
+    def init_app(
+        page: ft.Page,
+        data: Data,
+        create_histogram_fn: Callable[[Data], Figure],
+        save_data_fn: Callable[[Data], None],
+    ) -> None:
+        App(
+            page=page,
+            data=data,
+            create_histogram_fn=create_histogram_fn,
+            save_data_fn=save_data_fn,
+        )
+
+    init_ui = partial(
+        init_app,
+        data=data,
+        create_histogram_fn=create_histogram_fn,
+        save_data_fn=save_data_fn,
+    )
+
+    ft.app(target=init_ui)
