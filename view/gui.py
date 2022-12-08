@@ -4,7 +4,7 @@ from PySide6.QtWidgets import QMainWindow, QApplication
 from PySide6.QtCore import Qt
 
 
-from model.data import Data
+from model.data_handle import Data
 
 from pathlib import Path
 from typing import Callable, Iterator
