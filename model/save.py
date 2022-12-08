@@ -13,10 +13,13 @@ def save(data: Data, filepath: Path) -> None:
         pickle.dump(data, file)
 
 
-def load(filepath: Path) -> Data:
+def load(filepath: Path) -> Data | None:
     """
     Load saved data.
     Deserialize the Data object.
     """
+    if not filepath.exists():
+        return None
+
     with open(filepath, "rb") as file:
         return pickle.load(file)
