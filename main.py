@@ -1,43 +1,42 @@
 from pathlib import Path
 from functools import partial
 
-from view.gui import Window, init_app
-from controller.plotting import create_hist
-from controller.data_gen import norm_axes
-from controller.data_process import get_stats
-from model.data import read_column, read_data, save_data, Data
+from matplotlib.figure import Figure
 
-STYLESHEET: Path = Path.cwd() / "styles.qss"
-DATA_PATH: Path = Path.cwd() / "data.json"
+from view.flet_gui import run_app
+from controller.plotting import create_histogram
+from controller.statistics import calculate_basic_stats, get_normal_pdf_axes
+from model.data import Data
+from model.spreadsheet import get_data_frame
+from model.save import load, save
+
+DATA_PATH: Path = Path.cwd() / "data.pickle"
 
 
-def create_hist_fn(data: Data) -> None:
+def create_histogram_fn(data: Data) -> Figure:
     """
     Gets the data object and provide the necessary arguments for the create
     histogram function.
     """
-    hist_data: list[float] = read_column(data.file, data.column)[: data.amount]
-    mean, std = get_stats(hist_data)
-    lower_bound: int = min(hist_data)
-    upper_bound: int = max(hist_data)
-    x, y = norm_axes(start=lower_bound, end=upper_bound, mean=mean, std=std)
+    data_frame = get_data_frame(data.spreadsheet_file)
+    histogram_data: list[float] = data_frame[data.column][: data.amount]
+    mean, std = calculate_basic_stats(histogram_data)
+    lower_bound: int = min(histogram_data)
+    upper_bound: int = max(histogram_data)
+    x, y = get_normal_pdf_axes(start=lower_bound, end=upper_bound, mean=mean, std=std)
 
-    create_hist(func_axes=(x, y), data=hist_data, bins=data.bins, filename=data.imgname)
+    return create_histogram(func_axes=(x, y), data=histogram_data, bins=data.bins)
 
 
 def main() -> None:
-    stylesheet: str = STYLESHEET.read_text()
-    data: Data = read_data(DATA_PATH)
-    save_data_fn = partial(save_data, DATA_PATH)
+    data: Data = load(DATA_PATH)
+    save_data_fn = partial(save, filepath=DATA_PATH)
 
-    with init_app():
-        win = Window(
-            data=data,
-            stylesheet=stylesheet,
-            create_hist_fn=create_hist_fn,
-            save_data_fn=save_data_fn,
-        )
-        win.show()
+    run_app(
+        data=data,
+        create_histogram_fn=create_histogram_fn,
+        save_data_fn=save_data_fn,
+    )
 
 
 if __name__ == "__main__":
