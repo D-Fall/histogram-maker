@@ -4,8 +4,7 @@ from dataclasses import dataclass
 
 @dataclass
 class Data:
-    file: Path
+    spreadsheet_file: Path
     column: str
     amount: int
     bins: int
-    imgname: str
