@@ -1,8 +1,8 @@
-from numpy import array, linspace
+from numpy import array, mean, std, linspace
 from scipy.stats import norm
 
 
-def norm_axes(
+def get_normal_pdf_axes(
     start: int,
     end: int,
     mean: float = 0,
@@ -17,3 +17,11 @@ def norm_axes(
     y = norm.pdf(x, mean, std)
 
     return x, y
+
+
+def calculate_basic_stats(data: list[float]) -> tuple[float, float]:
+    """
+    Wrapper arround numpy's mean and std functions. Returns a tuple with the
+    mean and standard deviation of a list of floats or similar.
+    """
+    return mean(data), std(data)
