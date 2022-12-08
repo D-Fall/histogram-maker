@@ -3,7 +3,7 @@ from functools import partial
 
 from matplotlib.figure import Figure
 
-from view.flet_gui import run_app
+from view.gui import run_app
 from controller.plotting import create_histogram
 from controller.statistics import calculate_basic_stats, get_normal_pdf_axes
 from model.data import Data
