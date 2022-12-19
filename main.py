@@ -19,13 +19,15 @@ def create_histogram_fn(data: Data) -> Figure:
     histogram function.
     """
     data_frame = get_data_frame(data.spreadsheet_file)
-    histogram_data: list[float] = data_frame[data.column][: data.amount]
+    histogram_data: list[float] = data_frame[data.column_name][: data.number_of_values]
     mean, std = calculate_basic_stats(histogram_data)
     lower_bound: int = min(histogram_data)
     upper_bound: int = max(histogram_data)
     x, y = get_normal_pdf_axes(start=lower_bound, end=upper_bound, mean=mean, std=std)
 
-    return create_histogram(func_axes=(x, y), data=histogram_data, bins=data.bins)
+    return create_histogram(
+        func_axes=(x, y), data=histogram_data, bins=data.number_of_bins
+    )
 
 
 def main() -> None:
