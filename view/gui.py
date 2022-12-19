@@ -70,6 +70,7 @@ class App:
         print(f"{e.control.width = }")
 
     def init_ui(self):
+        self.page.title = "The Histogram Maker"
         self.page.padding = ft.padding.all(20)
         self.page.bgcolor = ft.colors.PRIMARY_CONTAINER
         self.page.scroll = ft.ScrollMode.AUTO
