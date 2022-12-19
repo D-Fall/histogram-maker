@@ -119,4 +119,5 @@ def init_form_section(
         padding=ft.padding.all(30),
         border_radius=ft.border_radius.all(20),
         expand=True,
+        col={"md": 12, "lg": 6},
     )

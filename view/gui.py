@@ -113,7 +113,7 @@ class App:
 
         self.chart_section = init_chart_section(chart=self.chart)
 
-        main_content = ft.Row(
+        main_content = ft.ResponsiveRow(
             controls=[
                 self.form_section,
                 self.chart_section,

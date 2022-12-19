@@ -34,4 +34,5 @@ def init_chart_section(chart: MatplotlibChart) -> ft.Container:
         bgcolor=ft.colors.BACKGROUND,
         border_radius=ft.border_radius.all(20),
         padding=ft.padding.all(30),
+        col={"md": 12, "lg": 6},
     )
