@@ -3,5 +3,6 @@ venv/
 __pycache__/
 .pytest_cache/
 test_hist.png
+test_data.pickle
 .~lock.test.xlsx#
 .coverage
