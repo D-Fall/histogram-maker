@@ -30,7 +30,7 @@ def create_histogram_fn(data: Data) -> Figure:
     )
 
 
-def main() -> None:
+def main():
     data: Data = load(DATA_PATH)
     save_data_fn = partial(save, filepath=DATA_PATH)
 

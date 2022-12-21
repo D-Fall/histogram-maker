@@ -31,7 +31,6 @@ from typing import Callable
 from itertools import islice
 
 import flet as ft
-from flet.matplotlib_chart import MatplotlibChart
 from flet.file_picker import FilePickerFile
 
 from matplotlib.figure import Figure
@@ -58,7 +57,7 @@ class App:
         self.init_ui()
         self.update_input_fields()
 
-    def on_resize(self, e: ft.ControlEvent) -> None:
+    def on_resize(self, e: ft.ControlEvent):
         print(f"{e.control.height = }")
         print(f"{e.control.width = }")
 
@@ -87,7 +86,7 @@ class App:
 
         self.page.add(main_content)
 
-    def hide_inputs(self) -> None:
+    def hide_inputs(self):
         """
         Hide the input fields except the file picker and disable the create
         histogram button.
@@ -99,7 +98,7 @@ class App:
 
         self.form_section.update()
 
-    def show_inputs(self) -> None:
+    def show_inputs(self):
         """
         Show the hidden input fields and enable the create histogram button.
         """
@@ -110,7 +109,7 @@ class App:
 
         self.form_section.update()
 
-    def fill_inputs(self) -> None:
+    def fill_inputs(self):
         """
         Fill in the input fields with the existing data.
         """
@@ -124,12 +123,12 @@ class App:
 
         self.form_section.update()
 
-    def set_column_name_options(self) -> None:
+    def set_column_name_options(self):
         data_frame = get_data_frame(self.data.spreadsheet_file)
         options = [ft.dropdown.Option(column_name) for column_name in data_frame]
         self.form_section.column_name.options = options
 
-    def update_input_fields(self) -> None:
+    def update_input_fields(self):
         """
         Hide or fill the input fields based of the existance of data.
         """
@@ -139,7 +138,7 @@ class App:
             self.set_column_name_options()
             self.fill_inputs()
 
-    def on_file_pick_result(self, e: ft.FilePickerResultEvent) -> None:
+    def on_file_pick_result(self, e: ft.FilePickerResultEvent):
         """
         Responsible for update the column name dropdown menu and the file name
         that appears on the file name field. It also shows the hidden input
@@ -176,7 +175,7 @@ class App:
 
         return True
 
-    def create_histogram(self, e: ft.ControlEvent) -> None:
+    def create_histogram(self, e: ft.ControlEvent):
         """
         If the data is properly filled, updates the data object, creates the
         figure and sets the chart to that figure. Then save the data and update
@@ -200,13 +199,13 @@ def run_app(
     data: Data,
     create_histogram_fn: Callable[[Data], Figure],
     save_data_fn: Callable[[Data], None],
-) -> None:
+):
     def init_app(
         page: ft.Page,
         data: Data,
         create_histogram_fn: Callable[[Data], Figure],
         save_data_fn: Callable[[Data], None],
-    ) -> None:
+    ):
         App(
             page=page,
             data=data,

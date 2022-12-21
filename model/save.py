@@ -4,7 +4,7 @@ from pathlib import Path
 from .data import Data
 
 
-def save(data: Data, filepath: Path) -> None:
+def save(data: Data, filepath: Path):
     """
     Save current data.
     Serialize the Data object.

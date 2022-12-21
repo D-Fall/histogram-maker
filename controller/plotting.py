@@ -26,5 +26,5 @@ def create_histogram(
     return fig
 
 
-def save_histogram(fig: Figure, filepath: Path) -> None:
+def save_histogram(fig: Figure, filepath: Path):
     fig.savefig(filepath, dpi=200)
