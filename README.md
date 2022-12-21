@@ -37,3 +37,4 @@ xlsx) and plots for you a histogram with the normal distribution included.
 2. Add error handling in case of user didn't type integers where it's suppose
    to;
 3. Make a config file (yaml?);
+4. Improove documentation.
