@@ -38,7 +38,7 @@ from matplotlib.figure import Figure
 
 from model.spreadsheet import get_data_frame
 from model.data import Data
-from .components.chart_section import init_chart_section
+from .components.chart_section import ChartSection
 from .components.form_section import FormSection
 
 
@@ -75,9 +75,7 @@ class App:
 
         self.page.overlay.append(self.form_section.pick_files_dialog)
 
-        self.chart = MatplotlibChart()
-
-        self.chart_section = init_chart_section(chart=self.chart)
+        self.chart_section = ChartSection(col={"md": 12, "lg": 6})
 
         main_content = ft.ResponsiveRow(
             controls=[
@@ -191,7 +189,7 @@ class App:
             return None
 
         fig: Figure = self.create_histogram_fn(self.data)
-        self.chart.figure = fig
+        self.chart_section.chart.figure = fig
 
         self.save_data_fn(self.data)
 
