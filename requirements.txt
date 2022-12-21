@@ -5,5 +5,4 @@ scipy
 pandas
 xlrd
 openpyxl
-PySide6
 flet
