@@ -7,10 +7,9 @@ from view.gui import run_app
 from controller.plotting import create_histogram
 from controller.statistics import calculate_basic_stats, get_normal_pdf_axes
 from model.data import Data
-from model.spreadsheet import get_data_frame
-from model.save import load, save
+from controller.spreadsheet import get_data_frame
 
-DATA_PATH: Path = Path.cwd() / "data.pickle"
+SAVE_PATH: Path = Path.cwd() / "data.pickle"
 
 
 def create_histogram_fn(data: Data) -> Figure:
@@ -31,13 +30,10 @@ def create_histogram_fn(data: Data) -> Figure:
 
 
 def main():
-    data: Data = load(DATA_PATH)
-    save_data_fn = partial(save, filepath=DATA_PATH)
-
     run_app(
-        data=data,
+        data=Data.load(SAVE_PATH),
         create_histogram_fn=create_histogram_fn,
-        save_data_fn=save_data_fn,
+        save_path=SAVE_PATH,
     )
 
 

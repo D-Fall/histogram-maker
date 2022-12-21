@@ -35,7 +35,7 @@ from flet.file_picker import FilePickerFile
 
 from matplotlib.figure import Figure
 
-from model.spreadsheet import get_data_frame
+from controller.spreadsheet import get_data_frame
 from model.data import Data
 from .components.chart_section import ChartSection
 from .components.form_section import FormSection
@@ -47,12 +47,12 @@ class App:
         page: ft.Page,
         data: Data,
         create_histogram_fn: Callable[[Data], Figure],
-        save_data_fn: Callable[[Data], None],
+        save_path: Path,
     ):
         self.page = page
         self.data = data
         self.create_histogram_fn = create_histogram_fn
-        self.save_data_fn = save_data_fn
+        self.save_path = save_path
 
         self.init_ui()
         self.update_input_fields()
@@ -190,7 +190,7 @@ class App:
         fig: Figure = self.create_histogram_fn(self.data)
         self.chart_section.chart.figure = fig
 
-        self.save_data_fn(self.data)
+        self.data.save(self.save_path)
 
         self.chart_section.update()
 
@@ -198,26 +198,26 @@ class App:
 def run_app(
     data: Data,
     create_histogram_fn: Callable[[Data], Figure],
-    save_data_fn: Callable[[Data], None],
+    save_path: Path,
 ):
     def init_app(
         page: ft.Page,
         data: Data,
         create_histogram_fn: Callable[[Data], Figure],
-        save_data_fn: Callable[[Data], None],
+        save_path: Path,
     ):
         App(
             page=page,
             data=data,
             create_histogram_fn=create_histogram_fn,
-            save_data_fn=save_data_fn,
+            save_path=save_path,
         )
 
     init_ui = partial(
         init_app,
         data=data,
         create_histogram_fn=create_histogram_fn,
-        save_data_fn=save_data_fn,
+        save_path=save_path,
     )
 
     ft.app(target=init_ui)
