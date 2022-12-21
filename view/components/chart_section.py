@@ -3,6 +3,10 @@ from flet.matplotlib_chart import MatplotlibChart
 
 
 class ChartSection(ft.UserControl):
+    """
+    Section that contains the histogram chart and controls related.
+    """
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
