@@ -39,14 +39,7 @@ from matplotlib.figure import Figure
 from model.spreadsheet import get_data_frame
 from model.data import Data
 from .components.chart_section import init_chart_section
-from .components.form_section import (
-    init_file_name,
-    init_column_name,
-    init_number_of_values,
-    init_number_of_bins,
-    init_create_histogram_btn,
-    init_form_section,
-)
+from .components.form_section import FormSection
 
 
 class App:
@@ -76,38 +69,11 @@ class App:
         self.page.scroll = ft.ScrollMode.AUTO
         self.page.on_resize = self.on_resize
 
-        pick_files_dialog = ft.FilePicker(on_result=self.on_file_pick_result)
-        pick_file = partial(
-            pick_files_dialog.pick_files,
-            initial_directory=Path.cwd().as_posix(),
-            allow_multiple=False,
-        )
+        self.form_section = FormSection(col={"md": 12, "lg": 6})
+        self.form_section.pick_files_dialog.on_result = self.on_file_pick_result
+        self.form_section.create_histogram_btn.on_click = self.create_histogram
 
-        self.page.overlay.append(pick_files_dialog)
-
-        self.file_name: ft.TextField = init_file_name()
-        self.column_name: ft.Dropdown = init_column_name()
-        self.number_of_values: ft.TextField = init_number_of_values()
-        self.number_of_bins: ft.TextField = init_number_of_bins()
-        self.create_histogram_btn: ft.ElevatedButton = init_create_histogram_btn(
-            create_histogram_fn=self.create_histogram,
-        )
-
-        self.form_inputs: dict[str, ft.TextField | ft.Dropdown] = {
-            "file_name": self.file_name,
-            "column_name": self.column_name,
-            "number_of_values": self.number_of_values,
-            "number_of_bins": self.number_of_bins,
-        }
-
-        self.form_section = init_form_section(
-            file_name=self.file_name,
-            pick_file=pick_file,
-            column_name=self.column_name,
-            number_of_values=self.number_of_values,
-            number_of_bins=self.number_of_bins,
-            create_histogram_btn=self.create_histogram_btn,
-        )
+        self.page.overlay.append(self.form_section.pick_files_dialog)
 
         self.chart = MatplotlibChart()
 
@@ -128,10 +94,10 @@ class App:
         Hide the input fields except the file picker and disable the create
         histogram button.
         """
-        for input_field in islice(self.form_inputs.values(), 1, None):
+        for input_field in islice(self.form_section.input_fields.values(), 1, None):
             input_field.visible = False
 
-        self.create_histogram_btn.disabled = True
+        self.form_section.create_histogram_btn.disabled = True
 
         self.form_section.update()
 
@@ -139,10 +105,10 @@ class App:
         """
         Show the hidden input fields and enable the create histogram button.
         """
-        for input_field in islice(self.form_inputs.values(), 1, None):
+        for input_field in islice(self.form_section.input_fields.values(), 1, None):
             input_field.visible = True
 
-        self.create_histogram_btn.disabled = False
+        self.form_section.create_histogram_btn.disabled = False
 
         self.form_section.update()
 
@@ -151,17 +117,19 @@ class App:
         Fill in the input fields with the existing data.
         """
         file_name: str = self.data.spreadsheet_file.name
-        self.file_name.value = file_name
+        self.form_section.file_name.value = file_name
 
-        for field_name in islice(self.form_inputs, 1, None):
-            self.form_inputs[field_name].value = str(self.data.__dict__[field_name])
+        for field_name in islice(self.form_section.input_fields, 1, None):
+            self.form_section.input_fields[field_name].value = str(
+                self.data.__dict__[field_name]
+            )
 
         self.form_section.update()
 
     def set_column_name_options(self) -> None:
         data_frame = get_data_frame(self.data.spreadsheet_file)
         options = [ft.dropdown.Option(column_name) for column_name in data_frame]
-        self.column_name.options = options
+        self.form_section.column_name.options = options
 
     def update_input_fields(self) -> None:
         """
@@ -181,7 +149,7 @@ class App:
         """
         if e.files:
             file: FilePickerFile = e.files[0]
-            self.file_name.value = file.name
+            self.form_section.file_name.value = file.name
             self.data.spreadsheet_file = Path(file.path)
 
             self.set_column_name_options()
@@ -196,17 +164,17 @@ class App:
             - True if all went well
             - False if there is a field missing
         """
-        for input_dialog in self.form_inputs.values():
+        for input_dialog in self.form_section.input_fields.values():
             if input_dialog.value is None:
                 return False
 
-        for field_name in islice(self.form_inputs, 1, None):
-            input_value: str = self.form_inputs[field_name].value
-            print(type(input_value))
-            if input_value.isdigit():
-                self.data.__dict__[field_name] = int(input_value)
+        for field_name, input_field in islice(
+            self.form_section.input_fields.items(), 1, None
+        ):
+            if input_field.value.isdigit():
+                self.data.__dict__[field_name] = int(input_field.value)
             else:
-                self.data.__dict__[field_name] = input_value
+                self.data.__dict__[field_name] = input_field.value
 
         return True
 
