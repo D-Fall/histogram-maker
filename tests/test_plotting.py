@@ -16,11 +16,11 @@ def fig() -> Figure:
     return create_histogram((x, y), data, 7)
 
 
-def test_create_histogram(fig: Figure) -> None:
+def test_create_histogram(fig: Figure):
     assert isinstance(fig, Figure)
 
 
-def test_save_histogram(fig: Figure) -> None:
+def test_save_histogram(fig: Figure):
     filepath = Path.cwd() / "tests/mock/test_hist.png"
 
     if filepath.exists():
