@@ -58,7 +58,12 @@ class FormSection(ft.UserControl):
 
         self.pick_files_dialog = ft.FilePicker()
 
-        self.input_fields: dict[str, ft.TextField | ft.Dropdown] = {
+    def get_input_fields(self) -> dict[str, ft.TextField | ft.Dropdown]:
+        """
+        Return a dictionary of the input fields that are used to
+        generate data.
+        """
+        return {
             "file_name": self.file_name,
             "column_name": self.column_name,
             "number_of_values": self.number_of_values,
