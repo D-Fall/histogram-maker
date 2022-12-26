@@ -10,4 +10,4 @@ def test_fail_to_get_data_frame():
         get_data_frame(Path("mock_spreadsheet.xlsx"))
 
     with pytest.raises(AssertionError):
-        get_data_frame("mock_spreadsheet.xlsx")
+        get_data_frame("mock_spreadsheet.xlsx")  # type: ignore
