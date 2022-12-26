@@ -2,17 +2,14 @@ from pathlib import Path
 
 import matplotlib.pyplot as plt
 from matplotlib.figure import Figure
-from numpy import array
 
 
 def create_histogram(
-    func_axes: tuple[array, array],
+    func_axes: tuple[list[float], ...],
     data: list[float],
     bins: int,
 ) -> Figure:
-    """
-    Create the histogram png file.
-    """
+    """Create the histogram png file."""
     plt.style.use(["science", "notebook", "grid"])
 
     fig, ax = plt.subplots()
