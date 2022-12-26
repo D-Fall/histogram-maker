@@ -69,10 +69,14 @@ class App:
         self.page.on_resize = self.on_resize
 
         self.form_section = FormSection(col={"md": 12, "lg": 6})
-        self.form_section.pick_files_dialog.on_result = self.on_file_pick_result
+        self.form_section.pick_files_dialog.on_result = (
+            self.on_file_pick_result
+        )
         self.form_section.create_histogram_btn.on_click = self.create_histogram
 
         self.page.overlay.append(self.form_section.pick_files_dialog)
+
+        self.input_fields = self.form_section.get_input_fields()
 
         self.chart_section = ChartSection(col={"md": 12, "lg": 6})
 
@@ -88,10 +92,10 @@ class App:
 
     def hide_inputs(self):
         """
-        Hide the input fields except the file picker and disable the create
-        histogram button.
+        Hide the input fields except the file picker and disable the
+        create histogram button.
         """
-        for input_field in islice(self.form_section.input_fields.values(), 1, None):
+        for input_field in islice(self.input_fields.values(), 1, None):
             input_field.visible = False
 
         self.form_section.create_histogram_btn.disabled = True
@@ -100,9 +104,10 @@ class App:
 
     def show_inputs(self):
         """
-        Show the hidden input fields and enable the create histogram button.
+        Show the hidden input fields and enable the create histogram
+        button.
         """
-        for input_field in islice(self.form_section.input_fields.values(), 1, None):
+        for input_field in islice(self.input_fields.values(), 1, None):
             input_field.visible = True
 
         self.form_section.create_histogram_btn.disabled = False
@@ -110,14 +115,12 @@ class App:
         self.form_section.update()
 
     def fill_inputs(self):
-        """
-        Fill in the input fields with the existing data.
-        """
+        """Fill in the input fields with the existing data."""
         file_name: str = self.data.spreadsheet_file.name
         self.form_section.file_name.value = file_name
 
-        for field_name in islice(self.form_section.input_fields, 1, None):
-            self.form_section.input_fields[field_name].value = str(
+        for field_name in islice(self.input_fields, 1, None):
+            self.input_fields[field_name].value = str(
                 self.data.__dict__[field_name]
             )
 
@@ -125,13 +128,13 @@ class App:
 
     def set_column_name_options(self):
         data_frame = get_data_frame(self.data.spreadsheet_file)
-        options = [ft.dropdown.Option(column_name) for column_name in data_frame]
+        options = [
+            ft.dropdown.Option(column_name) for column_name in data_frame
+        ]
         self.form_section.column_name.options = options
 
     def update_input_fields(self):
-        """
-        Hide or fill the input fields based of the existance of data.
-        """
+        """Hide or fill the input fields based of the existance of data."""
         if self.data == Data():
             self.hide_inputs()
         else:
@@ -140,9 +143,9 @@ class App:
 
     def on_file_pick_result(self, e: ft.FilePickerResultEvent):
         """
-        Responsible for update the column name dropdown menu and the file name
-        that appears on the file name field. It also shows the hidden input
-        fields.
+        Responsible for update the column name dropdown menu and the
+        file name that appears on the file name field. It also shows the
+        hidden input fields.
         """
         if e.files:
             file: FilePickerFile = e.files[0]
@@ -161,15 +164,16 @@ class App:
             - True if all went well
             - False if there is a field missing
         """
-        for input_dialog in self.form_section.input_fields.values():
+        for input_dialog in self.input_fields.values():
             if input_dialog.value is None:
                 return False
 
         for field_name, input_field in islice(
-            self.form_section.input_fields.items(), 1, None
+            self.input_fields.items(), 1, None
         ):
-            if input_field.value.isdigit():
-                self.data.__dict__[field_name] = int(input_field.value)
+            value: str = str(input_field.value)
+            if value.isdigit():
+                self.data.__dict__[field_name] = int(value)
             else:
                 self.data.__dict__[field_name] = input_field.value
 
@@ -177,9 +181,9 @@ class App:
 
     def create_histogram(self, e: ft.ControlEvent):
         """
-        If the data is properly filled, updates the data object, creates the
-        figure and sets the chart to that figure. Then save the data and update
-        the chart section.
+        If the data is properly filled, updates the data object, creates
+        the figure and sets the chart to that figure. Then save the data
+        and update the chart section.
 
         If the data is not properly filled, it does nothing.
         """
