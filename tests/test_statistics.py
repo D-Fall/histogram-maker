@@ -5,7 +5,7 @@ from numpy.random import randn
 
 
 def test_calculate_basic_stats():
-    mean, std = calculate_basic_stats(randn(100))
+    mean, std = calculate_basic_stats(list(randn(100)))
     assert mean == pytest.approx(0, abs=0.5)
     assert std == pytest.approx(1, rel=0.5)
 
