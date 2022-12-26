@@ -6,7 +6,7 @@ from model.data import Data
 
 
 @pytest.fixture
-def filepath() -> Path():
+def filepath() -> Path:
     return Path.cwd() / "tests/mock/test_data.pickle"
 
 
