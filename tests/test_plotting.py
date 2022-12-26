@@ -11,9 +11,9 @@ from matplotlib.figure import Figure
 def fig() -> Figure:
     x = np.linspace(-1, 1, 100)
     y = x**2
-    data = np.random.randn(100)
+    data = list(np.random.randn(100))
 
-    return create_histogram((x, y), data, 7)
+    return create_histogram((list(x), list(y)), data, 7)
 
 
 def test_create_histogram(fig: Figure):
